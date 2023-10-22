@@ -70,7 +70,9 @@ const loginHandler = async (req, res, next) => {
       return res.status(401).send({ message: "Email or password is wrong" });
     }
     if (!userEntity.verified) {
-      return res.status(401).send({ message: "User is not verified" });
+      return res
+        .status(401)
+        .send({ message: "User is not verified or expired" });
     }
     const userPayload = {
       email: userEntity.email,
@@ -135,7 +137,7 @@ const updatepPictureAvatar = async (req, res, next) => {
 const veryfyHandler = async (req, res, next) => {
   try {
     const { verificationToken } = req.params;
-    const user = await User.getUser({ verificationToken });
+    const user = await userDao.getUser({ verificationToken });
 
     if (!user) {
       return res
@@ -151,6 +153,7 @@ const veryfyHandler = async (req, res, next) => {
       verified: true,
       verificationToken: null,
     });
+    return res.status(200).send({ message: "user verified" });
   } catch (error) {
     console.error("veryfyHandler error", error);
   }

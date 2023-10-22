@@ -28,23 +28,23 @@ app.use((err, req, res, next) => {
 
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_PASSWORD,
-  },
-});
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     user: process.env.GMAIL_USER,
+//     pass: process.env.GMAIL_PASSWORD,
+//   },
+// });
 
-transporter
-  .sendMail({
-    from: process.env.GMAIL_USER,
-    to: process.env.GMAIL_USER,
-    subject: "Hello from nodemailer!",
-    text: "Hello! I'm nodemailer",
-    html: `<h1>Hello!</h1><br/>I\'m <b>nodemailer!</b>`,
-  })
-  .then(console.log)
-  .catch(console.error);
+// transporter
+//   .sendMail({
+//     from: process.env.GMAIL_USER,
+//     to: process.env.GMAIL_USER,
+//     subject: "Hello from nodemailer!",
+//     text: "Hello! I'm nodemailer",
+//     html: `<h1>Hello!</h1><br/>I\'m <b>nodemailer!</b>`,
+//   })
+//   .then(console.log)
+//   .catch(console.error);
 
 module.exports = { app };
