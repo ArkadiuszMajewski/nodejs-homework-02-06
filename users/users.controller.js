@@ -7,6 +7,7 @@ const express = require("express");
 const gravatar = require("gravatar");
 const jimp = require("jimp");
 const { User } = require("./user.model");
+const { sendUserVerificationMail } = require("./user-mailer.service");
 
 const signupHandler = async (req, res, next) => {
   try {
@@ -17,16 +18,17 @@ const signupHandler = async (req, res, next) => {
       default: "retro",
     });
     const avatarURL = avatar;
+
     const createdUser = await userDao.createUser({
       email,
       password,
       avatarURL,
     });
 
-    // await sendUserVerificationMail(
-    //   createdUser.email,
-    //   createdUser.verificationToken
-    // );
+    await sendUserVerificationMail(
+      createdUser.email,
+      createdUser.verificationToken
+    );
 
     return res.status(201).send({
       user: {
@@ -158,6 +160,45 @@ const veryfyHandler = async (req, res, next) => {
     console.error("veryfyHandler error", error);
   }
 };
+
+// const resendVerificationToken = async (req, res, nhext) => {
+//   try {
+//     const user = userDao.getUser({ email: req.body.email });
+
+//     console.log(user.email);
+//     if (!user) {
+//       return res.status(404).send({ message: "user dosent exist" });
+//     }
+//     if (user.verified) {
+//       return res.status(400).send({ message: "user is alredy verified" });
+//     }
+//     await sendUserVerificationMail(user.email, user.verificationToken);
+
+//     return res.status(200).send({ message: "token resend" });
+//   } catch (error) {
+//     console.error("resendVerificationToken error");
+//   }
+// };
+const resendVerificationHandler = async (req, res, next) => {
+  try {
+    const user = await userDao.getUser({ email: req.body.email });
+
+    if (!user) {
+      return res.status(404).send({ message: "User does not exist." });
+    }
+
+    if (user.verified) {
+      return res.status(400).send({ message: "User is already verified." });
+    }
+
+    await sendUserVerificationMail(user.email, user.verificationToken);
+
+    return res.status(204).send({ message: "token resend." });
+  } catch {
+    return next(e);
+  }
+};
+
 module.exports = {
   signupHandler,
   loginHandler,
@@ -166,4 +207,5 @@ module.exports = {
   secretHandler,
   updatepPictureAvatar,
   veryfyHandler,
+  resendVerificationHandler,
 };

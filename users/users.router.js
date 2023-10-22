@@ -28,6 +28,8 @@ usersRouter.patch(
   usersController.updatepPictureAvatar
 );
 usersRouter.get("/verify/:verificationToken", usersController.veryfyHandler);
+usersRouter.post("/verify", usersController.resendVerificationHandler);
+
 module.exports = {
   usersRouter,
 };
