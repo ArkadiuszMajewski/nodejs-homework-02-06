@@ -7,7 +7,7 @@ const express = require("express");
 const gravatar = require("gravatar");
 const jimp = require("jimp");
 const { User } = require("./user.model");
-const { sendUserVerificationMail } = require("./user-mailer.service");
+const { sendMail } = require("../mailer/mailer.service");
 
 const signupHandler = async (req, res, next) => {
   try {
@@ -181,6 +181,17 @@ const resendVerificationHandler = async (req, res, next) => {
   } catch {
     return next(e);
   }
+};
+
+const sendUserVerificationMail = async (email, verificationToken) => {
+  const mailOptions = {
+    to: email,
+    subject: "Welcome to our site!",
+    text: `Hello! Please verify your account by visiting http://localhost:3000/users/verify/${verificationToken}`,
+    html: `<h2>Hello!</h2><br/>Please verify your account by clicking <a href="http://localhost:3000/users/verify/${verificationToken}">here</a>!`,
+  };
+
+  await sendMail(mailOptions);
 };
 
 module.exports = {
