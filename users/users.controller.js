@@ -161,24 +161,6 @@ const veryfyHandler = async (req, res, next) => {
   }
 };
 
-// const resendVerificationToken = async (req, res, nhext) => {
-//   try {
-//     const user = userDao.getUser({ email: req.body.email });
-
-//     console.log(user.email);
-//     if (!user) {
-//       return res.status(404).send({ message: "user dosent exist" });
-//     }
-//     if (user.verified) {
-//       return res.status(400).send({ message: "user is alredy verified" });
-//     }
-//     await sendUserVerificationMail(user.email, user.verificationToken);
-
-//     return res.status(200).send({ message: "token resend" });
-//   } catch (error) {
-//     console.error("resendVerificationToken error");
-//   }
-// };
 const resendVerificationHandler = async (req, res, next) => {
   try {
     const user = await userDao.getUser({ email: req.body.email });
@@ -188,12 +170,14 @@ const resendVerificationHandler = async (req, res, next) => {
     }
 
     if (user.verified) {
-      return res.status(400).send({ message: "User is already verified." });
+      return res
+        .status(400)
+        .send({ message: "Verification has already been passed" });
     }
 
     await sendUserVerificationMail(user.email, user.verificationToken);
 
-    return res.status(204).send({ message: "token resend." });
+    return res.status(204).send({ message: "Verification email sent" });
   } catch {
     return next(e);
   }
