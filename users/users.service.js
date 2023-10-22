@@ -4,7 +4,6 @@ const getAllUsers = async () => {
   try {
     return await User.find();
   } catch (e) {
-    // Przykładowa obsługa błędu
     console.error(e);
     return [];
   }
@@ -14,7 +13,6 @@ const getUserById = async (id) => {
   try {
     return await User.findById(id);
   } catch (e) {
-    // Przykładowa obsługa błędu
     return null;
   }
 };

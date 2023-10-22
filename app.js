@@ -1,6 +1,7 @@
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
+const { usersRouter } = require("./users/users.router");
 
 const dotenv = require("dotenv");
 const nodemailer = require("nodemailer");

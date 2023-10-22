@@ -19,19 +19,15 @@ usersRouter.post(
 );
 
 usersRouter.get("/secret", authMiddleware, usersController.secretHandler);
-
 usersRouter.post("/logout", authMiddleware, usersController.logoutHandler);
-
 usersRouter.get("/current", authMiddleware, usersController.currentHandler);
-
 usersRouter.patch(
   "/avatars",
   authMiddleware,
   upload.single("avatar"),
   usersController.updatepPictureAvatar
-  // usersController.updateAvatar
 );
-
+usersRouter.get("/verify/:verificationToken", usersController.veryfyHandler);
 module.exports = {
   usersRouter,
 };

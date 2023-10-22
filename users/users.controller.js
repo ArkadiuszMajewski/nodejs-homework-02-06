@@ -11,6 +11,7 @@ const { User } = require("./user.model");
 const signupHandler = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+
     const avatar = gravatar.url(email, {
       protocol: req.protocol,
       default: "retro",
@@ -59,6 +60,7 @@ const secretHandler = async (req, res, next) => {
 
 const loginHandler = async (req, res, next) => {
   try {
+    console.log(req.body.password);
     const userEntity = await userDao.getUser({ email: req.body.email });
     const isUserPasswordValid = await userEntity.validatePassword(
       req.body.password
@@ -67,7 +69,9 @@ const loginHandler = async (req, res, next) => {
     if (!userEntity || !isUserPasswordValid) {
       return res.status(401).send({ message: "Email or password is wrong" });
     }
-
+    if (!userEntity.verified) {
+      return res.status(401).send({ message: "User is not verified" });
+    }
     const userPayload = {
       email: userEntity.email,
       subscription: userEntity.subscription,
@@ -128,7 +132,29 @@ const updatepPictureAvatar = async (req, res, next) => {
     res.status(500).json({ error: "An error occurred " });
   }
 };
+const veryfyHandler = async (req, res, next) => {
+  try {
+    const { verificationToken } = req.params;
+    const user = await User.getUser({ verificationToken });
 
+    if (!user) {
+      return res
+        .status(400)
+        .send({ message: "Veryfication token not valid or expired" });
+    }
+
+    if (user.verified) {
+      return res.status(400).send({ message: "user alredy in use" });
+    }
+
+    await userDao.updateUser(user.email, {
+      verified: true,
+      verificationToken: null,
+    });
+  } catch (error) {
+    console.error("veryfyHandler error", error);
+  }
+};
 module.exports = {
   signupHandler,
   loginHandler,
@@ -136,4 +162,5 @@ module.exports = {
   currentHandler,
   secretHandler,
   updatepPictureAvatar,
+  veryfyHandler,
 };
